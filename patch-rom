@@ -1,0 +1,16 @@
+#!/usr/bin/python3
+
+import sys
+
+current = 0
+with open(sys.argv[1]) as command:
+	for line in command:
+		addr, value = [int(x, 16) for x in line.split()]
+		if addr > current:
+			sys.stdout.buffer.write(sys.stdin.buffer.read(addr - current))
+			current += addr - current
+		assert current == addr
+		sys.stdout.buffer.write(bytes((value,)))
+		sys.stdin.buffer.read(1)	# Discard the byte that was replaced.
+		current += 1
+sys.stdout.buffer.write(sys.stdin.buffer.read())

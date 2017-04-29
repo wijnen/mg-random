@@ -1,0 +1,155 @@
+#!/usr/bin/python3
+
+data = open('mg.rom', 'rb').read()
+
+def read16(addr):
+	return data[addr] | data[addr + 1] << 8
+
+start = {
+		0x00: '(1+2).1',
+		0x10: '1.2',
+		0x1c: '1.3',
+		0x28: '1.4',
+		0x36: '1.0',
+		0x4f: '2.2',
+		0x58: '2.3',
+		0x5d: '2.0',
+		0x6b: '3.1',
+		0x6f: '3.0',
+	}
+
+def makefloor(start):
+	ret = []
+	board = {start: (0, 0)}
+	xy = {board[start]: start}
+	stack = [start]
+
+	def get(room):
+		u, d, l, r = data[0xae0e + 4 * room:0xae0e + 4 * (room + 1)]
+		return u, d, l, r
+
+	dirs = ((0, -1), (0, 1), (-1, 0), (1, 0))
+	bbox = [0, 0, 0, 0]
+
+	def bind(pos):
+		if pos[0] < bbox[0]:
+			bbox[0] = pos[0]
+		if pos[1] < bbox[1]:
+			bbox[1] = pos[1]
+		if pos[0] > bbox[2]:
+			bbox[2] = pos[0]
+		if pos[1] > bbox[3]:
+			bbox[3] = pos[1]
+
+	while len(stack) > 0:
+		room = stack.pop()
+		exits = get(room)
+		pos = board[room]
+		for d, exit in zip(dirs, exits):
+			if exit == 0xff:
+				continue
+			target = pos[0] + d[0], pos[1] + d[1]
+			if exit in board:
+				if target != board[exit]:
+					if room != exit:
+						print('mismatch: %x at %s has exit %s to %x, but that is already on the board at %s' % (room, board[room], d, exit, board[exit]))
+					if target not in xy:
+						xy[target] = exit + 0x100
+			else:
+				board[exit] = target
+				xy[target] = exit
+				if exit < 0x7e:
+					stack.append(exit)
+				bind(target)
+
+	for y in range(bbox[1], bbox[3] + 1):
+		line = []
+		for x in range(bbox[0], bbox[2] + 1):
+			if (x, y) in xy:
+				room = xy[(x, y)]
+				if room < 0x100:
+					line.append(' %02x ' % room)
+				else:
+					line.append('(%02x)' % (room - 0x100))
+			else:
+				line.append('    ')
+		ret.append(' '.join(line))
+	return ret
+
+desc = (
+		None,
+		'handgun',
+		'smg',
+		'grenade launcher',
+		'rocket launcher',
+		'plastic explosives',
+		'mine',
+		'missile',
+		'silencer',
+		'armor',
+		'bomb blast suit',
+		'flashlight',
+		'infrared goggles',
+		'gas mask',
+		'cigarettes',
+		'mine detector',
+		'antenna',
+		'binoculars',
+		'oxygen tanks',
+		'compass',
+		'parachute',
+		'antidote',
+		'card 1',
+		'card 2',
+		'card 3',
+		'card 4',
+		'card 5',
+		'card 6',
+		'card 7',
+		'card 8',
+		'ration',
+		'transceiver',
+		'uniform',
+		'box',
+		'bag',
+		'ammo',
+	)
+
+def get_exits(room):
+	'''Get special exits from room (through doors)'''
+	addr = read16(0x1e7c0 + 2 * room) + 0x14000
+	line = []
+	while data[addr] != 0xff:
+		line.append('%02x' % data[addr + 4])
+		addr += 5
+	return ' '.join(line)
+
+def print_floors():
+	keys = list(start.keys())
+	keys.sort()
+	for room in keys:
+		print(start[room] + ':')
+		print('\n'.join(makefloor(room)))
+
+def print_objs():
+	for room in range(0x7a, 0xdb):
+		code = data[0xd9fc + (room - 0x7a)]
+		if code == 0:
+			continue
+		addr = read16(0xda5d + 2 * (code - 1)) + 0x2000
+		items = []
+		while data[addr] != 0xff:
+			item = data[addr]
+			x = data[addr + 1]
+			y = data[addr + 2]
+			items.append('%04x' % addr + ':' + desc[item])
+			addr += 3
+		print('Room %02x (%s): %s' % (room, get_exits(room), ', '.join(items)))
+
+def print_exits():
+	for room in range(0xdb):
+		print('%x: %s' % (room, get_exits(room)))
+
+print_floors()
+print_objs()
+#print_exits()
