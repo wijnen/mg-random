@@ -1,0 +1,65 @@
+01 db75	hand gun ()
+02 dacf	smg (2)
+03 daf2	grenade launcher (1+2)
+04 db49	rocket launcher (1+2+5+6+flashlight+mask;1+2+5+6+flashlight+ration;4+5+6+grenade+ammo+mine+uniform)
+05 dae3	p-bomb 1.2 [2;4]
+05 daf6 p-bomb 1.3 [1+mask;1+ration;2+ration;2+missile]
+05 db1d p-bomb 1.0 [2+pbomb]
+05 db60 p-bomb 2.1 [bldg2+6]
+05 db79 p-bomb 2.0 [1+2+6+flashlight+(mask;ration);3+4+5+mine+grenade+ammo+pbomb+uniform+(mask;ration)]
+05 db84 p-bomb
+06 dac7 mine 1.1 ()
+06 dad7	mine 1.2 [2+3;3+4]
+06 db29 mine 2.1 [4+uniform+mine;1+2+3+4+5+6+mask+flashlight;1+2+3+4+5+6+ration+flashlight]
+07 daee	missile 1.3 [1+2+mask;2+ration;2+missile]
+07 db90 missile 1.4 [2+3+suit;3+4+suit]
+08 dbe9	silencer (2)
+09 db15	armor (2+4)
+0a db19	bomb blast suit (2+3+pbomb)
+0b db33 flashlight (4+6+uniform+mine+grenade+ammo;1+2+3+5+6+mask+flashlight;1+2+3+5+6+ration+flashlight)
+0c dadb goggles (2+3;3+4)
+0d dacb mask (1)
+0e 2dd4 cigarettes ()
+0f db09 mine detector (2+3+suit;3+4+suit)
+10 db25 antenna (2+4+uniform+mine+grenade+ammo;1+2+3+5+6+mask+flashlight;1+2+3+5+6+ration+flashlight)
+11 dac3 scope ()
+12 db71 oxygen (4+7+uniform+mine+grenade+ammo+compass+pbomb;1+2+3+5+6+flashlight+mask+compass+pbomb;1+2+3+5+6+flashlight+ration+compass+pbomb)
+13 db45 compass (2+4+uniform+mine+grenade+ammo;1+2+3+5+6+mask+flashlight;1+2+3+5+6+ration+flashlight)
+14 dadf parachute (1+2+3;1+3+4)
+15 db41 antidote (4+6+uniform+mine+grenade+ammo;1+2+3+5+6+mask+flashlight;1+2+3+5+6+ration+flashlight)
+16 dabf card 1 ()
+17 dafa card 2 (1+mask;1+ration;1+2+missile)
+18 db02 card 3 (2)
+19 dad3 card 4 (4;2+parachute+suit+grenade+ammo)
+1a db4d card 5 (4+uniform+grenade+ammo+mine)
+1b db5c card 6 (4+5+uniform+mine+grenade+ammo;1+2+3+5+6+mask+flashlight;1+2+3+5+6+ration+flashlight)
+1c dbe7 card 7 (1+4+uniform+mine+grenade+ammo;1+2+3+5+6+mask+flashlight;1+2+3+5+6+ration+flashlight)
+1d dbe8 card 8 (bldg2+7+oxygen+missile)
+1e dabb ration 1.1 ()
+1e db11 ration 1.3 [1+2+mask;2+ration;2+missile]
+1e db54 ration 2.0 [1+2+6+flashlight+(mask;ration);3+4+5+mine+grenade+ammo+pbomb+uniform+(mask;ration)]
+1e db58 ration
+1e db66 ration
+1e db8c ration
+1e dbe5 ration drop ()
+20 db21 uniform [2+pbomb]
+20 db2f uniform
+21 dafe box (2)
+22 db0d bag (2) fixed position.
+23 dae6 ammo drop ()
+23 daea ammo 1.2 [2;4]
+23 db05 ammo 1.4 [2;4]
+23 db2c ammo 1.3 []
+23 db37 ammo 1.0 [2+pbomb]
+23 db3a ammo 1.0 [2+3]
+23 db3d ammo 2.0 [1+2+6+flashlight;4+5+mine+grenade+ammo+pbomb+uniform+(mask;ration)]
+23 db50 ammo 2.0 [1+2+6+flashlight;4+5+mine+grenade+ammo+pbomb+uniform+(mask;ration)]
+23 db63 ammo 2.0 [1+2+6+flashlight+(mask;ration);3+4+5+mine+grenade+ammo+pbomb+uniform+(mask;ration)]
+23 db6a ammo 2.1 [4+uniform+mine;1+2+3+4+5+6+mask+flashlight;1+2+3+4+5+6+ration+flashlight]
+23 db6d ammo 2.2 [1+4+uniform+mine+grenade+ammo;1+2+3+5+6+mask+flashlight;1+2+3+5+6+ration+flashlight]
+23 db7d ammo 2.2 [1+4+uniform+mine+grenade+ammo;1+2+3+5+6+mask+flashlight;1+2+3+5+6+ration+flashlight]
+23 db81 ammo 2.2 [1+4+uniform+mine+grenade+ammo;1+2+3+5+6+mask+flashlight;1+2+3+5+6+ration+flashlight]
+23 db88 ammo 3.0.0 [bldg2+1+oxygen+missile;bldg2+1+oxygen+ration]
+23 db94 ammo 3.0.0 [bldg2+1+oxygen+missile;bldg2+1+oxygen+ration]
+23 db97 ammo
+23 dbe6 ammo

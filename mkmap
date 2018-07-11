@@ -1,31 +1,34 @@
 #!/usr/bin/python3
 
+import sys
+from PIL import Image, ImageDraw
+
 data = open('mg.rom', 'rb').read()
 
 def read16(addr):
 	return data[addr] | data[addr + 1] << 8
 
-start = {
-		0x00: '(1+2).1',
-		0x10: '1.2',
-		0x1c: '1.3',
-		0x28: '1.4',
-		0x36: '1.0',
-		0x4f: '2.2',
-		0x58: '2.3',
-		0x5d: '2.0',
-		0x6b: '3.1',
-		0x6f: '3.0',
-	}
-
-def makefloor(start):
-	ret = []
+def makefloor(start, rooms):
 	board = {start: (0, 0)}
 	xy = {board[start]: start}
 	stack = [start]
+	repeat = {}
 
 	def get(room):
+		origroom = room
+		if 0x7e <= room < 0xd0 or 0xe3 <= room < 0xf0:
+			#print('wrong room: %x' % room)
+			return (0xff,) * 4
+		if 0xd0 <= room < 0xe3:
+			room += 0x7e - 0xd0
+		if 0xf0 <= room:
+			room += 0x7e - 0xd0
+			room += 0xe3 - 0xf0
 		u, d, l, r = data[0xae0e + 4 * room:0xae0e + 4 * (room + 1)]
+		if origroom in (0xde, 0xf0):	# 0xde does not exist; f0 has wrong exits.
+			# Special case, because it's wrong in the source (in a harmless and unexploitable way).
+			print('original %x exits: %x %x %x %x' % (origroom, u, d, l, r))
+			return (0xff,) * 4
 		return u, d, l, r
 
 	dirs = ((0, -1), (0, 1), (-1, 0), (1, 0))
@@ -45,36 +48,45 @@ def makefloor(start):
 		room = stack.pop()
 		exits = get(room)
 		pos = board[room]
+		rooms.difference_update((room,))
+		#print('handling %x' % room)
 		for d, exit in zip(dirs, exits):
 			if exit == 0xff:
 				continue
 			target = pos[0] + d[0], pos[1] + d[1]
-			if exit in board:
-				if target != board[exit]:
-					if room != exit:
-						print('mismatch: %x at %s has exit %s to %x, but that is already on the board at %s' % (room, board[room], d, exit, board[exit]))
-					if target not in xy:
-						xy[target] = exit + 0x100
+			if room == exit:
+				if d[1] != 0:
+					print('wrong repeating exit')
+				repeat[room] = True
 			else:
-				board[exit] = target
-				xy[target] = exit
-				if exit < 0x7e:
+				if exit in board:
+					#print('%x already on board' % exit)
+					if target != board[exit]:
+						print('mismatch: %x at %s has exit %s to %x, but that is already on the board at %s' % (room, board[room], d, exit, board[exit]))
+				else:
+					#print('adding %x to board at %s' % (exit, target))
+					board[exit] = target
+					xy[target] = exit
+					#if exit < 0xc0:
 					stack.append(exit)
-				bind(target)
+					bind(target)
 
+	ret = []
+	im = Image.new('RGBA', (32 * 8 * (bbox[2] - bbox[0] + 1), 24 * 8 * (bbox[3] - bbox[1] + 1)), (0, 0, 0, 0))
 	for y in range(bbox[1], bbox[3] + 1):
 		line = []
 		for x in range(bbox[0], bbox[2] + 1):
 			if (x, y) in xy:
 				room = xy[(x, y)]
-				if room < 0x100:
+				if room not in repeat:
 					line.append(' %02x ' % room)
 				else:
-					line.append('(%02x)' % (room - 0x100))
+					line.append('<%02x>' % room)
+				im.paste(build_floor(room), (32 * 8 * (x - bbox[0]), 24 * 8 * (y - bbox[1])))
 			else:
 				line.append('    ')
 		ret.append(' '.join(line))
-	return ret
+	return ret, im, bbox[0] != bbox[2] or bbox[1] != bbox[3]
 
 desc = (
 		None,
@@ -117,39 +129,279 @@ desc = (
 
 def get_exits(room):
 	'''Get special exits from room (through doors)'''
-	addr = read16(0x1e7c0 + 2 * room) + 0x14000
+	if 0xe1 <= room < 0xf0 or room >= 0xfb:
+		return '', ()
+	if room >= 0xf0:
+		room -= 0xf0 - 0xe1
+	page = 0xd * 0x2000 - 0x6000
+	addr = read16(page + 0xa7c0 + 2 * room)
+	ret = []
 	line = []
-	while data[addr] != 0xff:
-		line.append('%02x' % data[addr + 4])
+	# For some reason, the direction is encoded as where to leave + 1.
+	# This is strange, because the code is used for where to enter.
+	redir = lambda d: (d - 1) & 1
+	while data[page + addr] != 0xff:
+		ret.append({'dir': redir(data[page + addr + 1]), 'x': data[page + addr + 3], 'y': data[page + addr + 2], 'room': data[page + addr + 4], 'door': data[page + addr]})
+		line.append('%02x' % data[page + addr + 4])
 		addr += 5
-	return ' '.join(line)
+	return ' '.join(line), ret
+
+#start = {
+#		0x00: '*.1',
+#		0x10: '1.2',
+#		0x1c: '1.3',
+#		0x28: '1.4',
+#		0x36: '1.0',
+#		0x4f: '2.2',
+#		0x58: '2.3',
+#		0x5d: '2.0',
+#		0x6f: '3.0',
+#		0xf2: 'e0',
+#	}
 
 def print_floors():
-	keys = list(start.keys())
-	keys.sort()
-	for room in keys:
-		print(start[room] + ':')
-		print('\n'.join(makefloor(room)))
+	rooms = set(range(0xfb))
+	#rooms.difference_update(range(0x7e, 0xd0))
+	#rooms.difference_update(range(0xe3, 0xf0))
+	while len(rooms) > 0:
+		start = min(rooms)
+		floors, im, multi = makefloor(start, rooms)
+		if multi:
+			print('%02x:' % start)
+			print('\n'.join(floors))
+		im.save('/tmp/floor-%02x.png' % start)
+
+def build_line(defs, num, line):
+	src = defs + 16 * (num - 1) + 4 * line
+	return tuple(data[src + i] for i in range(4))
+
+def read_nybble(page, base, addr):
+	a = data[page + base + addr // 2]
+	if not (addr & 1):
+		a >>= 4
+	return a & 0xf
+
+def build_floor(room):
+	chars = build_tiles(room)
+	page = 0xd * 0x2000 - 0x6000
+	# Page d, address 6000[room]
+	blocks = page + read16(page + 0x6000 + 2 * room)
+	a = read_nybble(page, 0x61f6, room)
+	block = page + read16(page + 0x6274 + (a - 1) * 2)
+	im = Image.new('RGB', (8 * 4 * 8, 6 * 4 * 8))
+	draw = ImageDraw.ImageDraw(im)
+	for y in range(6):
+		for y2 in range(4):
+			for x in range(8):
+				for ic, c in enumerate(build_line(block, data[blocks + y * 8 + x], y2)):
+					if c in chars:
+						im.paste(chars[c], (8 * (4 * x + ic), 8 * (4 * y + y2)))
+					else:
+						#print('not placing char %02x' % c)
+						pass
+	for x, y, item in get_objs(room):
+		item -= 1
+		text = None
+		if item < 0x4:
+			w = 4
+			start = 4 * item
+		elif item < 0xc:
+			w = 2
+			start = 4 * 4 + 2 * (item - 0x4)
+		elif item < 0x15:
+			w = 2
+			start = 0x40 + 2 * (item - 0xc)
+		elif item < 0x15 + 8:
+			w = 2
+			start = 0x40 + 2 * (0x15 - 0xc)
+			text = '%d' % (item - 0x15 + 1)
+		else:
+			w = 2
+			start = 0x40 + 2 * (item - 0xc - 7)
+		for iy in range(2):
+			for ix in range(w):
+				c = start + 0x20 * iy + ix
+				if (0x100 + c) in chars:
+					im.paste(chars[0x100 + c], (x + 8 * ix, y + 8 * iy), chars[0x100 + c])
+				else:
+					print('invalid char %x' % c)
+		if text is not None:
+			draw.text((x + 8, y + 8), text)
+	draw.text((4, 4), '%02x' % room)
+	used = {}
+	for exit in get_exits(room)[1]:
+		pos = (exit['x'], exit['y'])
+		if pos not in used:
+			used[pos] = 0
+		else:
+			used[pos] += 1
+			pos = (pos[0], pos[1] + 20 * used[pos])
+		doortype = data[page + 0xb046 + exit['door'] - 1]
+		if 2 <= doortype < 2 + 8:
+			typetext = '%d' % (doortype - 1)
+		elif 0x42 <= doortype < 0x42 + 8:
+			typetext = '[%d]' % (doortype - 0x41)
+		elif doortype in (0x10, 0x30):
+			typetext = 'explode'
+		elif doortype == 0x41:
+			typetext = 'elevator'
+		elif doortype == 0x81:
+			typetext = 'open'
+		elif doortype == 0x8a:
+			typetext = 'moving lorry'
+		elif doortype == 0x8b:
+			typetext = 'lorry'
+		elif doortype == 0x4c:
+			typetext = 'uniform'
+		elif doortype == 0x2f:
+			typetext = 'wallpunch'
+		elif doortype == 0xa:
+			typetext = 'doorpunch'
+		elif doortype == 0xd:
+			typetext = 'jennifer'
+		elif doortype == 0xe:
+			typetext = 'kill'
+		else:
+			print('unknown door type %x for door %x from room %x to %x' % (doortype, exit['door'], room, exit['room']))
+			typetext = 'unknown'
+		if room != exit['room']:
+			draw.text((pos[0], pos[1] + (-20 if pos[1] > 0x60 else 10)), '%02x' % exit['room'], fill = '#ffff00')
+		draw.text((pos[0], pos[1] + (-10 if pos[1] > 0x60 else 20)), typetext, fill = '#ffff00')
+	return im
+
+def add_chars(first, num, addr, pilpalette, items = False):
+	ret = {}
+	#print('building char %x+%x from %x' % (first, num, addr))
+	if items:
+		palette = [0, 6, 7, 8, 0xa, 0xc, 0xe, 0xf]
+	else:
+		palette = [1, 3, 5, 8, 9, 0xc, 0xe, 0xf]
+	sampledpilpalette = [
+			(73, 73, 36, 255),
+			(36, 36, 0, 255),
+			(73, 73, 73, 255),
+			(255, 0, 0, 255),
+			(36, 36, 36, 255),
+			(109, 109, 109, 255),
+			(255, 255, 255, 255),
+			(0, 0, 0, 255)
+		]
+	for i in range(8):
+		if i not in pilpalette:
+			pilpalette[i] = sampledpilpalette[i]
+	for n in range(num):
+		ret[first + n] = Image.new('RGBA', (8, 8))
+		for y in range(8):
+			e = data[addr + 0 + (n * 8 + y) * 3]
+			d = data[addr + 1 + (n * 8 + y) * 3]
+			c = data[addr + 2 + (n * 8 + y) * 3]
+			line = []
+			for x in range(8):
+				pixel = (((e << 3) >> (10 - x)) & 1) | (((d << 3) >> (9 - x)) & 2) | (((c << 3) >> (8 - x)) & 4)
+				line.append(palette[pixel])
+				if pixel not in pilpalette:
+					print('wrong color %x in tile; not %s' % (pixel, tuple(pilpalette.keys())))
+					continue
+				ret[first + n].putpixel((x, y), pilpalette[pixel])
+			#print(' '.join('%x' % k for k in line))
+	return ret
+
+def build_palette(room):
+	ret = {0: (0, 0, 0, 0)}
+	if room is None:	# items
+		page = 0x1 * 0x2000 - 0x6000
+		palette = [0, 6, 7, 8, 0xa, 0xc, 0xe, 0xf]
+		addr = 0x4aa3
+		code = 0xbad	# for error message
+	else:
+		page = 0x4 * 0x2000 - 0x6000
+		palette = [1, 3, 5, 8, 9, 0xc, 0xe, 0xf]
+		code = read_nybble(page, 0x8b40, room)
+		addr = read16(page + 0x8bbe + 2 * code)
+	while True:
+		c = data[page + addr]
+		if c == 0xff:
+			break
+		if c not in palette:
+			print('wrong color %x in palette type %x' % (c, code))
+			addr += 3
+			continue
+		r = (((data[page + addr + 1] >> 4) & 0x7) * 0x49) >> 1
+		b = ((data[page + addr + 1] & 0x7) * 0x49) >> 1
+		g = ((data[page + addr + 2] & 0x7) * 0x49) >> 1
+		ret[palette.index(c)] = (r, g, b, 255 if c != 0 else 0)
+		addr += 3
+	#print('palette: %x: %s' % (code, ret.keys()))
+	return ret
+
+def build_tiles(room):
+	itempalette = build_palette(None)
+	palette = build_palette(room)
+	ret = {}
+	ret.update(add_chars(0x100, 0x84, 0xa75d + 0x4 * 0x2000 - 0x6000, itempalette))
+	ret.update(add_chars(0x92, 4, 0xb2bf + 0xd * 0x2000 - 0x6000, palette))
+	ret.update(add_chars(0xa0, 8, 0x9509 + 0x7 * 0x2000 - 0x6000, palette))
+	for n in range(8):
+		ret[0xd0 + n] = ret[0xa0 + n].transpose(Image.FLIP_LEFT_RIGHT)
+	page = 0x7 * 0x2000 - 0x6000
+	charset = read_nybble(page, 0x6000, room)
+	base_ix = read16(page + 0x607e + 2 * charset)
+	for i in range(3):
+		ix = base_ix + 5 * i
+		if data[page + ix + 0] & 0x80:
+			#print('stop')
+			break
+		if data[page + ix + 0] & 0x40:
+			# Use first and num from last time.
+			copy = data[page + ix + 1]
+			#print('copy %x+%x->%x' % (first, num, copy))
+			for n in range(num):
+				ret[copy + n] = ret[first + n].transpose(Image.FLIP_LEFT_RIGHT)
+			continue
+		num = data[page + ix + 1]
+		first = data[page + ix + 2]
+		addr = read16(page + ix + 3)
+		ret.update(add_chars(first, num, page + addr, palette))
+	if True:
+		maxchar = max(ret)
+		im = Image.new('RGBA', (maxchar * 8 + 8, 8))
+		for c in ret:
+			im.paste(ret[c], (c * 8, 0))
+		im.save('/tmp/tiles-%02x.png' % room)
+	return ret
+
+def get_objs(room):
+	if not 0x7a <= room < 0xdb:
+		return ()
+	page = 0x4 * 0x2000 - 0x6000
+	code = data[page + 0xb9fc + (room - 0x7a)]
+	if code == 0:
+		return ()
+	addr = read16(page + 0xba5d + 2 * (code - 1))
+	items = []
+	while data[page + addr] != 0xff:
+		item = data[page + addr]
+		y = data[page + addr + 1]
+		x = data[page + addr + 2]
+		items.append((x, y, item))
+		addr += 3
+	return items
 
 def print_objs():
 	for room in range(0x7a, 0xdb):
-		code = data[0xd9fc + (room - 0x7a)]
-		if code == 0:
-			continue
-		addr = read16(0xda5d + 2 * (code - 1)) + 0x2000
-		items = []
-		while data[addr] != 0xff:
-			item = data[addr]
-			x = data[addr + 1]
-			y = data[addr + 2]
-			items.append('%04x' % addr + ':' + desc[item])
-			addr += 3
-		print('Room %02x (%s): %s' % (room, get_exits(room), ', '.join(items)))
+		items = [desc[item] for x, y, item in get_objs(room)]
+		print('Room %02x (%s): %s' % (room, get_exits(room)[0], ', '.join(items)))
 
 def print_exits():
-	for room in range(0xdb):
-		print('%x: %s' % (room, get_exits(room)))
+	for room in range(0xe1):
+		print('%x: %s' % (room, get_exits(room)[0]))
 
 print_floors()
-print_objs()
+#print_objs()
 #print_exits()
+#build_floor(0x1f)
+#build_tiles(0xfb)
+#for i in range(0x100):
+#	build_floor(i).save('/tmp/floor-%02x.png' % i)
+#for i in range(0x10):
+#	build_palette(i)

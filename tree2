@@ -1,0 +1,54 @@
+!				Initial item: 2dd4:cigarettes with 8 offset
+8				Fake non-item: 0000:fake address
+				Dropped items: dbe5:ration, dbe6:ammo
+&4uGaRr|1256lRr			Special: dbe7:card 7
+*47uGaT|12567lT			Special: dbe8:card 8
+2				Special: dbe9:silencer
+23				Room 7a (39): db02:card 3, db05:ammo
+				Room 7e (05): dabb:ration
+				Room 7f (05): dabf:card 1
+				Room 80 (05): dac3:binoculars
+				Room 82 (07): db75:handgun
+				Room 84 (07): dac7:mine
+4|1msGap|2sGap			Room 87 (09): dad3:card 4
+2				Room 89 (0d): dacf:smg
+1				Room 8a (08): dacb:gas mask
+13m|23|34			Room 8b (10): dadb:infrared goggles
+13m|23|34			Room 8c (11): dad7:mine
+1m|2|4				Room 8e (17 8d 15 15): dae3:plastic explosives, dae6:ammo
+13m|123|134			Room 8f (14): dadf:parachute
+2				Room 93 (1c): daee:missile
+				Room 95 (94 1e): daea:ammo
+12				Room 97 (96): daf2:grenade launcher
+1m|2|4				Room 99 (20 20): db79:plastic explosives
+2				Room 9c (23): dafe:box
+1m|12				Room 9d (24): dafa:card 2
+2				Room 9e (24): db58:ration
+13ms|23s|34s			Room a0 (28): db09:mine detector
+1ms|2s|4s			Room a2 (2a): db7d:ammo
+13ms|23s|34s			Room a3 (33): db90:missile
+1m|2|4				Room a8 (39): db0d:bag
+1mB|2B|4B			Room a9 (3b): db21:uniform
+13mB|23B|34B			Room aa (3e): db19:bomb blast suit
+4				Room ab (3a): db15:armor
+1mB|2B|4B			Room ac (3d): db81:ammo, db84:plastic explosives
+4				Room ae (40): db1d:plastic explosives
+4				Room af (41): db11:ration
+46uGa|12356l			Room b0 (46): db33:flashlight
+4u|123456l			Room b1 (46): db29:mine, db2c:ammo, db2f:uniform
+24uGa|12356l			Room b2 (4a): db25:antenna
+46uGa|12356l			Room b3 (4b): daf6:plastic explosives
+14uGa|12356l			Room b5 (4f): db37:ammo, db3a:ammo, db3d:ammo
+46uGa|12356l			Room b7 (57): db41:antidote
+24uGar|12356lr			Room b8 (57): db45:compass
+456uGa|12356l			Room b9 (56): db49:rocket launcher
+45uGa|12356l			Room bb (59): db4d:card 5, db50:ammo
+12356lm|45uGaBm|12356lBm	Room bc (62 bd): db5c:card 6
+12356lm|45uGaBm|12356lBm	Room bf (65): db60:plastic explosives, db63:ammo, db66:ration
+14uGaT|12356lT			Room c0 (6e): db6a:ammo, db6d:ammo
+12356l|45uGaBm|12356lBm		Room c4 (5d): db94:ammo, db97:ammo
+12356lm|45uGaBm|12356lBm	Room c5 (5e): db58:ration
+47uGacB|123567lcB		Room c8 (73): db71:oxygen tanks
+47uGac|123567lc			Room d6 (68): db7d:ammo
+47uGac|123567lc			Room d8 (68): db94:ammo, db97:ammo
+47uGac|123567lc			Room da (68): db8c:ration

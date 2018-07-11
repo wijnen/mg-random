@@ -1,0 +1,207 @@
+mg screen stuff...
+
+41e0: hl += a
+4248: *** set pages 1, 2, 3 ***
+424e: *** set pages 4, 5, 6 *** (store values at 0xf0f1 too)
+426a: *** set pages 7, 8, 9 ***
+4270: *** set pages a, b, c ***
+4276: *** set pages d, e, f ***
+
+42b4: *** de = de[a]
+42d4: *** read nybble from hl[a] -> a *** {{{
+	c=a
+	hl += a / 2
+	a=(hl)
+	if c & 1:
+		a >>=4
+	a &= 0x0f
+}}}
+
+Palette stuff {{{
+4ab5:	pages a,b,c
+	a=6185[room]
+	pages 4,5,6
+	de=8cb4
+	set palette hl[a]
+	return 1,2,3
+
+4acb: set palette for room (4,5,6:8b40 or special for no light/ir goggles) {{{
+	hl = 8b40
+	pages 4,5,6
+	b = room
+	if room == 0xfb:	# this room does not exist?!
+		goto 4aff	# No goggles
+	if room in (0xdc, 0xdd):	# Middle of dark corridor
+		goto 4ae9
+	if not 0x7b <= room <= 0x7e:	# Rest of dark corridor
+		goto 4af4
+
+4ae9:	*c135 (selected item) == 3 (light): goto 4af4
+4af4:	*c135 (selected item) != 4 (goggl): goto 4aff
+4aff:	No special lights
+	read nybble from 8b40[room]
+	set pages 4,5,6
+	hl = 8bbe[a]
+	set palette from hl:
+		while True:
+			a = *hl++
+			if a == 0xff: return
+			de = *hl++
+			4e66: set palette data for color a to de (rb:g)
+	return with pages 1,2,3
+}}}
+
+goggles: a = 0xa
+dark: a = 0xb
+normal: a = 456:8b40[room] (nybble)
+
+4a92:
+	set pages 4,5,6
+	set_palette(0x8b0b)
+	4a66 = 4248: set pages 1,2,3; return
+
+4b09:
+	set palette(hl[a])
+	return pages 1,2,3
+
+
+4ec4: *** Set palette from *hl *** (store values in vram at 0x.... too) {{{
+	while True:
+		a=*hl++
+		if a == 0xff: return
+		de = *hl++++
+		call 4e66
+}}}
+
+4e66: *** Set single palette value *** {{{
+	[0x99] = a
+	[0x99] = 0x90	register 16: palette address
+	[0x9a] = d	palette data
+	[0x9a] = e	palette data
+	hl = 0xf680 + 2 * a
+	call 4d93	write to vram at hl
+	[0x99] = d
+	[0x99] = e
+}}}
+}}}
+
+4d93: *** Prepare vdp for vram write at hl *** {{{
+	[0x99] = (h >> 6) & 3
+	[0x99] = 0x8e	register 14: top vram address bits
+	[0x99] = l
+	[0x99] = (h & 0x3f) | 40	write data to this address
+}}}
+
+4ed2: *** Wait for vdp command to complete ***
+
+5011: vdp copy vram to vram {{{
+	src: 0:h, a[6:7]:l
+	dst: 0:d, a[5:4]:e
+	cnt: 0:b, 0:c
+	col: 0
+	arg: 0
+	cmd: 0x90 | a[3:0]	(vram copy; filter type)
+}}}
+
+4acb: set palette for room tiles
+42bd: hl = 4*(a-1)
+42d1: read nybble from hl[room]
+
+4cf0: draw screen {{{
+	4276: set d,e,f
+	4e1b: clear screen with hmmv
+	42b1 (de=0x6000): de = de[room]
+	4c9a:
+		ec06 = loop counter (8 blocks)
+		ec00 = dest pointer
+		ec04 = src pointer for block list
+		a = 61f6[room] (nybble)
+		de = 6274[a-1]
+		ec02 = src pointer for block content
+		a = *ec04
+		*ec04 += 1
+		hl = de + 16 * (a-1)
+		copy hl->de (4x4)
+
+in pages d,e,f
+copy hl to de, de = e000, hl = 6a60
+ec04 = hl = 6000[room] (word)
+a = 61f6[room] (nybble)
+ec02 = 6274[a-1]
+hl = (ec02) + 16 * ((++ec04) - 1)
+hl = 84b0
+}}}
+
+4935: write charset {{{
+	42c4: ldir(src=4b13, dst=e700,cnt=8)
+	426a: page 7,8,9
+	a=nybble 6000[room]
+	if a==c157: return
+	4bbc:
+		pages d,e,f
+		42c4: ldir(src=4b13, dst=e700,cnt=8)
+		524c(hl=b2bf,de=9048,b=4)	Write lift buttons.
+	426a: page 7,8,9
+	ix = 607e[a]
+	3*:
+		ix[0].7 ? ->skip
+		49a7:
+			ix[0].6 ? -> other stuff:
+				b = last_b
+				hl = 49df(a = ix[1])
+				de = last_de
+				5265: b*:
+					hl'=e708
+					527e (build character from hl)
+					50b1(hl=e707, b=1): b*:
+						8*:
+							nybble-swap e707[0:4]->ec43[::-1]
+							de += 8
+						5087 (hl = 0xec40) (write char from hl to vram de)
+						de += 4 with weird overflow (next character)
+			b = ix[1]
+			49df(a = ix[2]):
+				hl = 8000 + (a & 0xe0) << 5 + (a & 0x1f) << 2
+			de = hl
+			hl = ix[3:4]
+			524c: build b characters from hl to vram de
+				for _ in range(b):
+					hl' = e708
+					527e: 8*
+						e=*hl++
+						d=*hl++
+						c=*hl++
+						4*:
+							e=00000cde (bits 7 of all)
+							d=e7
+							c'=*de * 16
+							e=00000cde (bits 6 of all)
+							d=e7
+							*hl'++ = c' | *de
+					509c(hl = e708, b=1): b*
+						5087: write character from hl to vram de
+							8*:
+								4d59(bc=4): write bc bytes to vram hl
+									4d93: write to vram at hl
+									4d51: a = b + (c != 0); b = c
+									98 << *hl * bc
+						de += 4 for next character
+}}}
+
+4b33: draw items
+	4bcf:
+		pages 7,8,9
+		42c4: set palette
+		draw boxes and mirorred boxes
+		return 1,2,3
+	pages 4,5,6
+	42c7: set palette
+	write characters (hl=a75d, de=b000, b=0x84)
+
+
+
+5fa6:
+	4a9d:
+		(pages=1,2,3)
+		hl=4aa3
+		4ec4: set palette from *hl
