@@ -205,3 +205,41 @@ hl = 84b0
 		(pages=1,2,3)
 		hl=4aa3
 		4ec4: set palette from *hl
+
+41e5: de += a
+
+store *(c450 + door - 1)
+*(b046 + door - 1)
+
+1 2  1 gas mask
+2 41   elevator
+3 5  4 courtyard prisoner
+4 5  4 exit courtyard
+5 5  4 doorsteek
+6 45 4 exit building 1
+7 5  4 petro gone
+8 42 1 prisoner
+9 3  2 smg
+a 43 2 prisoner
+b 41   elevator
+c 2f f secret cell exit
+d 7  6 north
+e 7  6 ellen
+f 4  3 shoot gunner
+10 30 b uniform
+
+2-9: need card 1-8, remains open
+b (69)
+d: jennifer (compass)
+e: auto open at event (mg dead; big boss dead)
+10: explode
+2f: punch
+30: explode
+41: elevator
+42-49: need card 1-8, auto close
+81: already open
+8a: moving lorry?
+8b: lorry
+4c: uniform
+
+

@@ -59,7 +59,6 @@ treedata = '''\
 47uGac|123567lc			Room da (68): db8c:ration'''
 
 import random
-from frozendict import frozendict
 
 data = list(open('mg.rom', 'rb').read())
 
@@ -101,7 +100,7 @@ for line in treedata.split('\n'):
 			numcode = tuple(parse(x) for x in code.split('|'))
 			if numcode not in groups:
 				groups[numcode] = []
-			groups[numcode].append(frozendict(addr = addr, need = need))
+			groups[numcode].append(dict(addr = addr, need = need))
 		if addr != 0:
 			item = data[addr] + offset
 			objects.append(item)
