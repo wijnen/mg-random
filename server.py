@@ -165,7 +165,6 @@ def generate_rom(initial = True, silencer = True, card7 = True, card8 = True, dr
 			new_groups[choice] = []
 		new_groups[choice].extend(options)
 	groups = new_groups
-	print('new groups:', new_groups)
 
 	order = []
 
@@ -255,7 +254,6 @@ try:
 		args = {}
 		for arg in ('initial', 'silencer', 'card7', 'card8', 'drops', 'bag'):
 			args[arg] = arg not in connection.query or connection.query[arg][0].lower() not in ('0', 'false')
-		print(args)
 		data = generate_rom(**args)
 		return server.reply(connection, 200, bytes(data), 'application/octet-stream')
 
