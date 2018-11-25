@@ -148,13 +148,15 @@ def generate_rom(initial = True, silencer = True, card7 = True, card8 = True, dr
 			code = None
 		elif code.startswith('&'):
 			if not card7:
-				desc = '0000:card 7'
-			need = 0x1c
+				desc = 'Fixed: 0000:card 7'
+			else:
+				need = 0x1c
 			code = code[1:]
 		elif code.startswith('*'):
 			if not card8:
-				desc = '0000:card 8'
-			need = 0x1d
+				desc = 'Fixed: 0000:card 8'
+			else:
+				need = 0x1d
 			code = code[1:]
 		elif code.startswith('%'):
 			if not drops:
