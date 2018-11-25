@@ -74,24 +74,76 @@ treedata = '''\
 
 import random
 
-data = list(open('mg.rom', 'rb').read())
+decoder = {
+		#    0x00,	# -
+		#    0x01,	# Handgun
+		#    0x02,	# Smg
+		'G': 0x03,	# Grenade launcher
+		'R': 0x04,	# Rocket launcher
+		'B': 0x05,	# Plastic explosives
+		#    0x06,	# Mine
+		#    0x07,	# Missile
+		#    0x08,	# Silencer
+		#    0x09,	# Armor
+		's': 0x0a,	# Bomb blast suit
+		'l': 0x0b,	# Flashlight
+		#    0x0c,	# Infrared goggles
+		'm': 0x0d,	# Gas mask
+		#    0x0e,	# Cigarettes
+		#    0x0f,	# Mine detector
+		'r': 0x10,	# Antenna
+		#    0x11,	# Binoculars
+		'T': 0x12,	# Oxygen tank
+		'c': 0x13,	# Compass
+		'p': 0x14,	# Parachute
+		#    0x15,	# Antidote
+		'1': 0x16,	# Card 1
+		'2': 0x17,	# Card 2
+		'3': 0x18,	# Card 3
+		'4': 0x19,	# Card 4
+		'5': 0x1a,	# Card 5
+		'6': 0x1b,	# Card 6
+		'7': 0x1c,	# Card 7
+		'8': 0x1d,	# Card 8
+		#    0x1e,	# Ration
+		#    0x1f,	# Transmitter (picking it up leads to a crash)
+		'u': 0x20,	# Uniform
+		#    0x21,	# Box
+		#    0x22,	# Bag of equipment
+		'a': 0x23,	# Ammo
+	}
 
-decoder = {'G': 0x03, 'R': 0x04, 'B': 0x05, 's': 0x0a, 'l': 0x0b, 'm': 0x0d, 'r': 0x10, 'T': 0x12, 'c': 0x13, 'p': 0x14, '1': 0x16, '2': 0x17, '3': 0x18, '4': 0x19, '5': 0x1a, '6': 0x1b, '7': 0x1c, '8': 0x1d, 'u': 0x20, 'a': 0x23}
 def parse(code):
 	return tuple(decoder[x] for x in code)
 
-def generate_rom(initial = True, silencer = True, card7 = True, card8 = True, drops = True, bag = True):
+def generate_rom(initial = True, silencer = True, card7 = True, card8 = True, drops = True, bag = True, rom = 'en'):
+	roms = {
+			'jp': 'Metal Gear (Japan).rom',
+			'en': 'Metal Gear (Europe).rom',
+			'en2': 'Metal Gear (Europe 2).rom',
+		}
+	print('rom: ', roms[rom])
+	data = list(open(roms[rom], 'rb').read())
+	if rom == 'en':
+		itemoffset = -0xd
+		firstitemoffset = -0x4f
+	else:
+		itemoffset = 0
+		firstitemoffset = 0
+
 	spots = set()	# locations that are not yet assigned an item. (memory address)
 	groups = {}	# items that need to be assigned to a spot; key = constraint, value = list of dicts {'addr', 'need'}.
 	objects = []	# items that need to be assigned to a spot. (numerical code)
 	needed = set()	# objects for which the spot must be accessible before picking them up.
 	for line in treedata.split('\n'):
 		code, desc = line.split('\t', 1)
+		thisitemoffset = itemoffset
 		offset = 0
 		need = None
 		if code == '!':
 			if not initial:
 				continue
+			thisitemoffset = firstitemoffset
 			offset = 8
 			code = None
 		elif code.startswith('&'):
@@ -119,7 +171,7 @@ def generate_rom(initial = True, silencer = True, card7 = True, card8 = True, dr
 		if need is not None:
 			needed.add(need)
 		objs = desc.split(':', 1)[1].split(',')
-		addrs = [int(x.split(':', 1)[0], 16) for x in objs]
+		addrs = [int(x.split(':', 1)[0], 16) + thisitemoffset for x in objs]
 		for addr in addrs:
 			if code is None:
 				first_item = addr
@@ -254,6 +306,8 @@ try:
 		args = {}
 		for arg in ('initial', 'silencer', 'card7', 'card8', 'drops', 'bag'):
 			args[arg] = arg not in connection.query or connection.query[arg][0].lower() not in ('0', 'false')
+		if 'rom' in connection.query:
+			args['rom'] = connection.query['rom'][0]
 		data = generate_rom(**args)
 		return server.reply(connection, 200, bytes(data), 'application/octet-stream')
 
