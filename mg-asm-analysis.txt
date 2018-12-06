@@ -1,6 +1,14 @@
 mg screen stuff...
 
+Code for picking up items: 8fdb
+don't act on p-bomb, min, missile, ration, ammo.
+for weapons, hl = c520; for equipment, hl = c5a0 and a -= 8
+hl[a-1] = 1: found object
+
+41df: hl += 2*a
 41e0: hl += a
+41e5: de += a
+41ea: jp (sp[2a])
 4248: *** set pages 1, 2, 3 ***
 424e: *** set pages 4, 5, 6 *** (store values at 0xf0f1 too)
 426a: *** set pages 7, 8, 9 ***

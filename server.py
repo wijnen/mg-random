@@ -116,6 +116,9 @@ decoder = {
 def parse(code):
 	return tuple(decoder[x] for x in code)
 
+fixups = ((0xc5, 0x22), (0xd6, 0x2c), (0xd8, 0))
+drop_addrs = ((0xdbe9, 0x6e93), (0xdbe7, 0x7b9e), (0xdbe8, 0x576a))
+
 def generate_rom(initial = True, silencer = True, card7 = True, card8 = True, drops = True, bag = True, rom = 'en'):
 	roms = {
 			'jp': 'Metal Gear (Japan).rom',
@@ -125,11 +128,16 @@ def generate_rom(initial = True, silencer = True, card7 = True, card8 = True, dr
 	print('rom: ', roms[rom])
 	data = list(open(roms[rom], 'rb').read())
 	if rom == 'en':
+		codeoffset = -0x4c
 		itemoffset = -0xd
 		firstitemoffset = -0x4f
 	else:
+		codeoffset = 0
 		itemoffset = 0
 		firstitemoffset = 0
+
+	for room, code in fixups:
+		data[0xd9fc + itemoffset + (room - 0x7a)] = code
 
 	spots = set()	# locations that are not yet assigned an item. (memory address)
 	groups = {}	# items that need to be assigned to a spot; key = constraint, value = list of dicts {'addr', 'need'}.
@@ -149,14 +157,10 @@ def generate_rom(initial = True, silencer = True, card7 = True, card8 = True, dr
 		elif code.startswith('&'):
 			if not card7:
 				desc = 'Fixed: 0000:card 7'
-			else:
-				need = 0x1c
 			code = code[1:]
 		elif code.startswith('*'):
 			if not card8:
 				desc = 'Fixed: 0000:card 8'
-			else:
-				need = 0x1d
 			code = code[1:]
 		elif code.startswith('%'):
 			if not drops:
@@ -292,6 +296,10 @@ def generate_rom(initial = True, silencer = True, card7 = True, card8 = True, dr
 		data[spot] = item
 		objects.remove(item)
 		accessible.add(item)
+	
+	for item_addr, check_addr in drop_addrs:
+		item = data[item_addr + itemoffset]
+		data[check_addr + codeoffset] = 0x20 + item - 1 if item < 8 else 0xa0 + item - 8 - 1
 	return data
 
 try:
