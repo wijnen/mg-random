@@ -5,14 +5,9 @@
 		<title>Metal Gear Randomizer</title>
 		<script type='application/javascript'>
 			function update_link() {
-				var items = ['initial', 'silencer', 'card7', 'card8', 'drops', 'bag'];
 				var link = 'random.rom';
 				var e = document.getElementById('rom');
 				link += '?rom=' + e.value;
-				for (var i = 0; i < items.length; ++i) {
-					e = document.getElementById(items[i]);
-					link += '&' + items[i] + '=' + (e.checked ? 'true' : 'false');
-				}
 				document.getElementById('link').href = link;
 			}
 		</script>
@@ -21,18 +16,12 @@
 		<h1>Metal Gear Randomizer</h1>
 		<ul>
 			<li>
-				<select name='rom' id='rom'>
-					<option value='en' selected='selected'>English</option>
-					<option value='en2'>English (2)</option>
-					<option value='jp'>Japanese</option>
+				<select onchange='update_link()' name='rom' id='rom'>
+					<option value='English (original)' selected='selected'>English (original)</option>
+					<option value='English (alternative)'>English (alternative)</option>
+					<option value='Japanese'>Japanese</option>
 				</select>
 			</li>
-			<li><label>Randomize initial item<input id='initial' type='checkbox' name='initial' checked='checked' onchange='update_link()'/></label></li>
-			<li><label>Randomize silencer<input id='silencer' type='checkbox' name='silencer' checked='checked' onchange='update_link()'/></label></li>
-			<li><label>Randomize card 7<input id='card7' type='checkbox' name='card7' checked='checked' onchange='update_link()'/></label></li>
-			<li><label>Randomize card 8<input id='card8' type='checkbox' name='card8' checked='checked' onchange='update_link()'/></label></li>
-			<li><label>Randomize drops<input id='drops' type='checkbox' name='drops' checked='checked' onchange='update_link()'/></label></li>
-			<li><label>Randomize equipment bag<input id='bag' type='checkbox' name='bag' checked='checked' onchange='update_link()'/></label></li>
 			<li><a id='link' href='random.rom'>Generate</a></li>
 		</ul>
 	</body>

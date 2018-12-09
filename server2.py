@@ -437,7 +437,9 @@ def get_spots(areas, spots):
 		return random.sample(options, 1)[0]
 	raise AssertionError('no spots available')
 
-def randomize(version): # {{{
+def randomize(version = None): # {{{
+	if version is None:
+		version = 'English (original)'
 	data = list(open(versions[version][0], 'rb').read())
 	code_offset, item_offset, first_item_offset = (-0x4c, -0xd, -0x4f) if versions[version][1] else (0, 0, 0)
 	# Fix item tables so each item definition is only used once.
@@ -569,5 +571,27 @@ def randomize(version): # {{{
 	return bytes(data)
 # }}}
 
-open('random.rom', 'wb').write(randomize('English (original)'))
-#open('random.rom', 'wb').write(randomize('Japanese'))
+try:
+	import fhs
+	import websocketd
+
+	config = fhs.init({'port': 9999})
+
+	server = websocketd.Httpd(config['port'], None, httpdirs = ['html'], tls = False)
+
+	def new_page(connection, path = None):
+		if connection.address.path != '/random.rom':
+			return default_page(connection, path)
+		data = randomize(connection.query['rom'][0] if 'rom' in connection.query else None)
+		return server.reply(connection, 200, bytes(data), 'application/octet-stream')
+
+	default_page = server.page
+	server.page = new_page
+	print('server is running')
+	websocketd.fgloop()
+
+except ImportError:
+	data = randomize()
+	with open('random.rom', 'wb') as out:
+		out.write(bytes(data))
+	print('Unable to import fhs or websocketd; writing output to file')
