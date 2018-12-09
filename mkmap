@@ -3,7 +3,8 @@
 import sys
 from PIL import Image, ImageDraw
 
-data = open('mg.rom', 'rb').read()
+data = open('Metal Gear (Japan).rom', 'rb').read()
+
 
 def read16(addr):
 	return data[addr] | data[addr + 1] << 8
@@ -139,9 +140,8 @@ def get_exits(room):
 	line = []
 	# For some reason, the direction is encoded as where to leave + 1.
 	# This is strange, because the code is used for where to enter.
-	redir = lambda d: (d - 1) & 1
 	while data[page + addr] != 0xff:
-		ret.append({'dir': redir(data[page + addr + 1]), 'x': data[page + addr + 3], 'y': data[page + addr + 2], 'room': data[page + addr + 4], 'door': data[page + addr]})
+		ret.append({'dir': data[page + addr + 1], 'x': data[page + addr + 3], 'y': data[page + addr + 2], 'room': data[page + addr + 4], 'door': data[page + addr]})
 		line.append('%02x' % data[page + addr + 4])
 		addr += 5
 	return ' '.join(line), ret
@@ -159,7 +159,7 @@ def get_exits(room):
 #		0xf2: 'e0',
 #	}
 
-def print_floors():
+def print_floors(single = False):
 	rooms = set(range(0xfb))
 	#rooms.difference_update(range(0x7e, 0xd0))
 	#rooms.difference_update(range(0xe3, 0xf0))
@@ -170,6 +170,8 @@ def print_floors():
 			print('%02x:' % start)
 			print('\n'.join(floors))
 		im.save('/tmp/floor-%02x.png' % start)
+		if single:
+			break
 
 def build_line(defs, num, line):
 	src = defs + 16 * (num - 1) + 4 * line
