@@ -3,6 +3,45 @@
 
 import random
 
+itemname = (
+	None,
+	'handgun',
+	'smg',
+	'grenade launcher',
+	'rocket launcher',
+	'plastic explosives',
+	'mine',
+	'missile',
+	'silencer',
+	'armor',
+	'bomb blast suit',
+	'flashlight',
+	'infrared goggles',
+	'gas mask',
+	'cigarettes',
+	'mine detector',
+	'antenna',
+	'binoculars',
+	'oxygen tanks',
+	'compass',
+	'parachute',
+	'antidote',
+	'card 1',
+	'card 2',
+	'card 3',
+	'card 4',
+	'card 5',
+	'card 6',
+	'card 7',
+	'card 8',
+	'ration',
+	'transceiver',
+	'uniform',
+	'box',
+	'bag',
+	'ammo',
+)
+
 def parse_line(line):	# {{{
 	parts = line.split()
 	if len(parts) == 0:
@@ -23,7 +62,7 @@ items = [parse_line(line) for line in '''
 -1	dbe6	# dropped items
 13	dbe9 ! 6e93	# silencer
 81	dbe7 ! 7b9e	# card 7
-100	dbe8 ! 576a	# card 8
+116	dbe8 ! 576a	# card 8
 0	dabb 1e 50 50 ff	01
 0	dabf 16 50 70 ff	02
 0	dac3 11 40 70 ff	03
@@ -69,8 +108,8 @@ items = [parse_line(line) for line in '''
 65	db60 05 48 28		25
 65	db63 23 48 c0		25
 65	db66 1e 60 c0 ff	25
-99	db6a 23 18 68		26
-99	db6d 23 50 40 ff	26
+115	db6a 23 18 68		26
+115	db6d 23 50 40 ff	26
 97	db71 12 20 88 ff	27
 0	db75 01 60 40 ff	28
 7	db79 05 38 30 ff	29
@@ -188,18 +227,18 @@ doors = [ # {{{
 		{'addr': 0xb052, 'from': 77, 'to': 21},
 		{'addr': 0xb053, 'from': 77, 'to': 78},
 		{'addr': 0xb0c8, 'from': 77, 'to': 113},
-		{'addr': 0xb054, 'from': 21, 'to': 15},
+		#{'addr': 0xb054, 'from': 21, 'to': 15},
 		{'addr': 0xb08f, 'from': 21, 'to': 22},
-		{'addr': 0xb054, 'from': 15, 'to': 21},
+		#{'addr': 0xb054, 'from': 15, 'to': 21},
 		{'addr': 0xb056, 'from': 15, 'to': 80},
 		{'addr': 0xb058, 'from': 25, 'to': 26},
 		{'addr': 0xb04b, 'from': 48, 'to': 15},
 		{'addr': 0xb077, 'from': 50, 'to': 51},
 		{'addr': 0xb078, 'from': 50, 'to': 52},
-		{'addr': 0xb079, 'from': 50, 'to': 66},
+		{'addr': 0xb079, 'from': 53, 'to': 66},
 		{'addr': 0xb078, 'from': 52, 'to': 50},
-		{'addr': 0xb07a, 'from': 52, 'to': 53},
-		{'addr': 0xb07a, 'from': 53, 'to': 52},
+		{'addr': 0xb07a, 'from': 114, 'to': 53},
+		{'addr': 0xb07a, 'from': 53, 'to': 114},
 		{'addr': 0xb07d, 'from': 53, 'to': 70},
 		{'addr': 0xb07c, 'from': 53, 'to': 67},
 		{'addr': 0xb07e, 'from': 53, 'to': 69},
@@ -226,28 +265,28 @@ doors = [ # {{{
 		{'addr': 0xb08c, 'from': 81, 'to': 88},
 		{'addr': 0xb092, 'from': 54, 'to': 55},
 		{'addr': 0xb093, 'from': 54, 'to': 56},
-		{'addr': 0xb06a, 'from': 54, 'to': 57},
+		#{'addr': 0xb06a, 'from': 54, 'to': 57},
 		{'addr': 0xb075, 'from': 74, 'to': 76},
 		{'addr': 0xb0cd, 'from': 74, 'to': 75},
 		{'addr': 0xb095, 'from': 72, 'to': 73},
-		{'addr': 0xb097, 'from': 65, 'to': 64},
+		#{'addr': 0xb097, 'from': 65, 'to': 64},
 		{'addr': 0xb09a, 'from': 60, 'to': 110},
 		{'addr': 0xb098, 'from': 64, 'to': 63},
 		{'addr': 0xb099, 'from': 72, 'to': 62},
-		{'addr': 0xb097, 'from': 64, 'to': 65},
+		#{'addr': 0xb097, 'from': 64, 'to': 65},
 		{'addr': 0xb09a, 'from': 110, 'to': 60},
 		{'addr': 0xb09b, 'from': 110, 'to': 59},
-		{'addr': 0xb09c, 'from': 110, 'to': 58},
-		{'addr': 0xb09d, 'from': 110, 'to': 64},
-		{'addr': 0xb09d, 'from': 64, 'to': 110},
+		#{'addr': 0xb09c, 'from': 110, 'to': 58},
+		#{'addr': 0xb09d, 'from': 110, 'to': 64},
+		#{'addr': 0xb09d, 'from': 64, 'to': 110},
 		{'addr': 0xb0ce, 'from': 72, 'to': 61},
 		{'addr': 0xb0cf, 'from': 64, 'to': 65},
 		{'addr': 0xb07f, 'from': 92, 'to': 53},
 		{'addr': 0xb09e, 'from': 93, 'to': 94},
 		{'addr': 0xb0e1, 'from': 94, 'to': 95},
 		{'addr': 0xb09e, 'from': 94, 'to': 93},
-		{'addr': 0xb0a1, 'from': 98, 'to': 100},
-		{'addr': 0xb0d0, 'from': 98, 'to': 99},
+		{'addr': 0xb0a1, 'from': 100, 'to': 116},
+		{'addr': 0xb0d0, 'from': 99, 'to': 115},
 		{'addr': 0xb0a4, 'from': 96, 'to': 102},
 		{'addr': 0xb0a4, 'from': 102, 'to': 96},
 		{'addr': 0xb0a5, 'from': 102, 'to': 103},
@@ -289,7 +328,7 @@ doors = [ # {{{
 		{'addr': 0xb066, 'from': 12, 'to': 0},
 		{'addr': 0xb0c5, 'from': 7, 'to': 8},
 		{'addr': 0xb0c4, 'from': 7, 'to': 5},
-		{'addr': 0xb06a, 'from': 57, 'to': 54},
+		#{'addr': 0xb06a, 'from': 57, 'to': 54},
 		{'addr': 0xb06c, 'from': 16, 'to': 15},
 		{'addr': 0xb06e, 'from': 9, 'to': 8},
 		{'addr': 0xb06d, 'from': 10, 'to': 8},
@@ -318,8 +357,8 @@ doors = [ # {{{
 		{'addr': 0xb0de, 'from': 62, 'to': 63},
 		{'addr': 0xb0ce, 'from': 61, 'to': 72},
 		{'addr': 0xb0cf, 'from': 65, 'to': 64},
-		{'addr': 0xb0d0, 'from': 99, 'to': 98},
-		{'addr': 0xb0a1, 'from': 100, 'to': 98},
+		{'addr': 0xb0d0, 'from': 115, 'to': 99},
+		{'addr': 0xb0a1, 'from': 116, 'to': 100},
 		{'addr': 0xb0a3, 'from': 101, 'to': 96},
 		{'addr': 0xb05c, 'from': 37, 'to': 35},
 		{'addr': 0xb0cd, 'from': 75, 'to': 74},
@@ -330,19 +369,21 @@ doors = [ # {{{
 		{'addr': 0xb09b, 'from': 59, 'to': 110},
 		{'addr': 0xb08d, 'from': 91, 'to': 111},
 		{'addr': 0xb080, 'from': 71, 'to': 70},
-		{'addr': 0xb09c, 'from': 58, 'to': 110},
+		#{'addr': 0xb09c, 'from': 58, 'to': 110},
 	] # }}}
+
+open_doors = {0xb06a, 0xb09c, 0xb09d, 0xb097, 0xb054}
 
 prisoners = {3, 6, 17, 18, 20, 21, 79, 37, 28, 42, 47,	# building 1 {{{
 		68, 55, 59, 61, 83, 87, 90,		# building 2
 		101}					# building 3 }}}
-# 3 prisoners only with card 8: 100
+# 3 prisoners only with card 8: 116
 
 explodes = [ # {{{
 		(15, 23),
 		(15, 24),
 		(15, 25),
-		(60, 61),
+		(60, 72),
 		(72, 74),
 		(78, 79),
 		(94, 96),
@@ -365,9 +406,11 @@ oneway = [
 		{'type': 'parachute', 'from': 44, 'to': 45, 'need': (0x14,)},
 		{'type': 'bb-suit', 'from': 15, 'to': 39, 'need': (0xa,)},
 		{'type': 'hind d', 'from': 39, 'to': 44, 'need': (0x3, 0x23), 'level': 2, 'return': True},
-		{'type': 'bulldozer', 'from': 52, 'to': 53, 'return': True, 'need': (0x3, 0x23)},
+		{'type': 'bulldozer', 'from': 52, 'to': 114, 'return': True, 'need': (0x3, 0x23)},
 		{'type': 'tank', 'from': 48, 'to': 49, 'need': (0x6,), 'level': 3},
 		{'type': 'tank', 'from': 49, 'to': 48, 'need': None},
+		{'type': 'uniform', 'from': 49, 'to': 50, 'need': (0x20,)},
+		{'type': 'uniform', 'from': 50, 'to': 49, 'need': None},
 		{'type': 'oxygen', 'from': 53, 'to': 98, 'need': (0x12,)},
 		{'type': 'oxygen', 'from': 98, 'to': 53, 'need': (0x12,)},
 		{'type': 'compass', 'from': 92, 'to': 93, 'need': (0x13,)},
@@ -376,7 +419,7 @@ oneway = [
 		{'type': 'light', 'from': 113, 'to': 76, 'need': (0xb,)},
 		{'type': 'metal gear', 'from': 107, 'to': 108, 'need': (0x5,), 'level': 4, 'return': True},
 		{'type': 'big boss', 'from': 108, 'to': 109, 'need': (0x4, 0x23), 'return': True},
-		#{'type': 'capture', 'from': 15, 'to': 21, 'need': None},	# exit card must be accessible. This is too hard for now, so just don't require getting captured.
+		{'type': 'capture', 'from': 15, 'to': 21, 'need': None},
 		{'type': 'lorry', 'from': 48, 'to': 45, 'need': None},
 		{'type': 'lorry', 'from': 45, 'to': 0, 'need': None},
 		{'type': 'lorry', 'from': 93, 'to': 48, 'need': None},
@@ -388,6 +431,11 @@ oneway = [
 		{'type': 'lift', 'from': 81, 'to': 54, 'need': None},
 		{'type': 'lift', 'from': 57, 'to': 91, 'need': None},
 		{'type': 'jennifer', 'from': 112, 'to': 89, 'need': None, 'level': 4},
+		{'type': 'hack', 'from': 58, 'to': 110, 'need': None},
+		{'type': 'hack', 'from': 110, 'to': 64, 'need': None},
+		{'type': 'hack', 'from': 64, 'to': 65, 'need': None},
+		{'type': 'hack', 'from': 54, 'to': 57, 'need': None},
+		{'type': 'hack', 'from': 21, 'to': 15, 'need': None},
 	]
 # }}}
 
@@ -400,8 +448,7 @@ explosive = 0x5
 missile = 0x7
 gasmask = 0xd
 
-def get_items(spots, area):
-	print('adding spots for', area)
+def get_items(spots, area): # {{{
 	last_area = []
 	for item in items:
 		if item['area'] != area:
@@ -409,15 +456,27 @@ def get_items(spots, area):
 		spots.append(item)
 		last_area.append(item)
 	return last_area
+# }}}
 
-def default_door(max_card):
-	return max_card + 1 + 0x40
-	#return random.randrange(max_card) + 1 + 0x40 + 1
+def close_door_num(close_doors, orig): # {{{
+	assert close_doors in (True, False, None)
+	if close_doors is True:
+		return 0x40
+	if close_doors is False:
+		return 0
+	return orig & 0x40
+# }}}
 
-def default_item():
+def default_door(max_card, close_doors, orig): # {{{
+	return max_card + 1 + close_door_num(close_doors, orig)
+	#return random.randrange(max_card) + 1 + close_door_num(close_doors, orig) + 1
+# }}}
+
+def default_item(): # {{{
 	return random.sample([5, 6, 7, 0x1e, 0x23], 1)[0]
+# }}}
 
-def add_item(data, item, spots, item_offset, code_offset, spot = None):
+def add_item(data, item, spots, item_offset, code_offset, spot = None): # {{{
 	if spot is None:
 		spot = random.sample(spots, 1)[0]
 		if item in [5, 6, 7, 0x1e, 0x23]:
@@ -425,19 +484,21 @@ def add_item(data, item, spots, item_offset, code_offset, spot = None):
 				spot = random.sample(spots, 1)[0]
 	spots.remove(spot)
 	data[spot['addr'] + item_offset] = item
-	print('putting item %02x at %04x' % (item, spot['addr']))
+	print('putting %s at %04x (area %d)' % (itemname[item], spot['addr'], spot['area']))
 	if 'extra' in spot:
 		data[spot['extra'] + code_offset] = 0x20 + item - 1 if item < 8 else 0xa0 + item - 8 - 1
+# }}}
 
-def get_spots(areas, spots):
+def get_spots(areas, spots): # {{{
 	for a in range(len(areas) - 1, -1, -1):
 		options = [x for x in areas[a] if x in spots]
 		if len(options) == 0:
 			continue
 		return random.sample(options, 1)[0]
 	raise AssertionError('no spots available')
+# }}}
 
-def randomize(version = None): # {{{
+def randomize(version = None, close_doors = None): # {{{
 	if version is None:
 		version = 'English (original)'
 	data = list(open(versions[version][0], 'rb').read())
@@ -446,11 +507,15 @@ def randomize(version = None): # {{{
 	# There are 3 duplicates, and 2 unused entries; the third location is made empty.
 	for room, code in ((0xc5, 0x22), (0xd6, 0x2c), (0xd8, 0)):
 		data[0xd9fc + item_offset + (room - 0x7a)] = code
+	# Permanently open doors in building 2 to prevent getting stuck.
+	for hack in open_doors:
+		data[hack + 0x1f000 - 0xb000] = 0x81
 	# Generate order in which regions can be visited.
-	regions = set(range(1, 114))
+	regions = set(range(1, 117))
 	order = [('start', 0, None)]
 	used = [0]
 	rescued = 0
+	used_doors = 0
 	while len(regions) > 0:
 		# Find reachable regions.
 		reachable = []
@@ -480,6 +545,9 @@ def randomize(version = None): # {{{
 		regions.remove(target[1])
 		used.append(target[1])
 		order.append(target)
+		if target[0] == 'door':
+			used_doors += 1
+	# Distribute items such that the order works.
 	spots = []
 	get_items(spots, -1)
 	found = set()
@@ -487,14 +555,14 @@ def randomize(version = None): # {{{
 	doors_done = 0
 	cards = [0]
 	for c in range(1, 8):
-		cards.append(random.randrange(cards[-1] + 1, len(doors) * len(cards) // 7))
+		cards.append(random.randrange(used_doors * (len(cards) - 1) // 7 + 1, used_doors * len(cards) // 7))
+	# Assign non-unique items to drops.
 	drops = [default_item(), default_item()]
 	while drops[0] == drops[1]:
 		drops[1] = default_item()
 	for spot in range(2):
 		add_item(data, drops[spot], spots, item_offset, code_offset, items[spot])
 		found.add(drops[spot])
-	print('order', order)
 	doors_used = set()
 	last_areas = []
 	for type, area, info in order:
@@ -504,19 +572,18 @@ def randomize(version = None): # {{{
 		elif type == 'door':
 			# Set card or default thing; place card if it's new.
 			card_addr = info['addr'] + 0x1f000 - 0xb000
-			if card_addr in doors_used:
-				continue
+			assert card_addr not in doors_used
 			doors_used.add(card_addr)
 			if doors_done in cards:
 				last_card += 1
-				# Put the new card in the last explored area. In exceptional cases it is possible that that is impossible; in that case just pick any spot.
+				# Put the new card in the last explored area, or the one before that until it is possible.
 				new_spot = get_spots(last_areas, spots)
 				add_item(data, 0x15 + last_card, spots, item_offset, code_offset, new_spot)
 				found.add(0x15 + last_card)
-				data[card_addr] = last_card + 1 + 0x40
+				data[card_addr] = last_card + 1 + close_door_num(close_doors, data[card_addr])
 			else:
 				assert doors_done > 0 and last_card > 0
-				data[card_addr] = default_door(last_card)
+				data[card_addr] = default_door(last_card, close_doors, data[card_addr])
 				if (data[card_addr] - 1) & 0xf != last_card:
 					allow_new_area = False
 			doors_done += 1
@@ -541,6 +608,7 @@ def randomize(version = None): # {{{
 		if area in gas and gasmask not in found:
 			add_item(data, gasmask, spots, item_offset, code_offset)
 			found.add(gasmask)
+		print('access new area %d using %s (%s)' % (area, type, info))
 		new_area = get_items(spots, area)
 		if len(new_area) > 0 and allow_new_area:
 			last_areas.append(new_area)
@@ -549,7 +617,7 @@ def randomize(version = None): # {{{
 		card_addr = d['addr'] + 0x1f000 - 0xb000
 		if card_addr in doors_used:
 			continue
-		data[card_addr] = default_door(last_card)
+		data[card_addr] = default_door(last_card, close_doors, data[card_addr])
 	# Fill other spots.
 	all_items = set(range(1, 0x24))
 	all_items.difference_update({5, 6, 7, 0xe, 0x1e, 0x1f, 0x22, 0x23})
@@ -582,7 +650,8 @@ try:
 	def new_page(connection, path = None):
 		if connection.address.path != '/random.rom':
 			return default_page(connection, path)
-		data = randomize(connection.query['rom'][0] if 'rom' in connection.query else None)
+		close_doors = None if 'doors' not in connection.query or connection.query['doors'] == 'keep' else True if connection.query['doors'] == 'close' else False
+		data = randomize(connection.query['rom'][0] if 'rom' in connection.query else None, close_doors)
 		return server.reply(connection, 200, bytes(data), 'application/octet-stream')
 
 	default_page = server.page

@@ -3,7 +3,7 @@
 import sys
 from PIL import Image, ImageDraw
 
-data = open('Metal Gear (Japan).rom', 'rb').read()
+data = open('Metal Gear (Japan).rom' if len(sys.argv) < 2 else sys.argv[1], 'rb').read()
 
 
 def read16(addr):

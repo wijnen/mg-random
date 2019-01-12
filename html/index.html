@@ -7,7 +7,8 @@
 			function update_link() {
 				var link = 'random.rom';
 				var e = document.getElementById('rom');
-				link += '?rom=' + e.value;
+				var d = document.getElementById('doors');
+				link += '?rom=' + e.value + '&doors=' + d.value;
 				document.getElementById('link').href = link;
 			}
 		</script>
@@ -20,6 +21,13 @@
 					<option value='English (original)' selected='selected'>English (original)</option>
 					<option value='English (alternative)'>English (alternative)</option>
 					<option value='Japanese'>Japanese</option>
+				</select>
+			</li>
+			<li>
+				<select onchange='update_link()' name='doors' id='doors'>
+					<option value='keep' selected='selected'>Don't change</option>
+					<option value='close'>Close</option>
+					<option value='open'>Leave open</option>
 				</select>
 			</li>
 			<li><a id='link' href='random.rom'>Generate</a></li>
