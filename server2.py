@@ -61,7 +61,7 @@ items = [parse_line(line) for line in '''
 -1	dbe5	# dropped items
 -1	dbe6	# dropped items
 13	dbe9 ! 6e93	# silencer
-81	dbe7 ! 7b9e	# card 7
+117	dbe7 ! 7b9e	# card 7
 116	dbe8 ! 576a	# card 8
 0	dabb 1e 50 50 ff	01
 0	dabf 16 50 70 ff	02
@@ -418,7 +418,7 @@ oneway = [
 		{'type': 'light', 'from': 76, 'to': 113, 'need': (0xb,)},
 		{'type': 'light', 'from': 113, 'to': 76, 'need': (0xb,)},
 		{'type': 'metal gear', 'from': 107, 'to': 108, 'need': (0x5,), 'level': 4, 'return': True},
-		{'type': 'big boss', 'from': 108, 'to': 109, 'need': (0x4, 0x23), 'return': True},
+		{'type': 'big boss', 'from': 108, 'to': 109, 'need': (0x4, 0x10, 0x23), 'return': True},
 		{'type': 'capture', 'from': 15, 'to': 21, 'need': None},
 		{'type': 'lorry', 'from': 48, 'to': 45, 'need': None},
 		{'type': 'lorry', 'from': 45, 'to': 0, 'need': None},
@@ -430,7 +430,8 @@ oneway = [
 		{'type': 'lift', 'from': 91, 'to': 71, 'need': None},
 		{'type': 'lift', 'from': 81, 'to': 54, 'need': None},
 		{'type': 'lift', 'from': 57, 'to': 91, 'need': None},
-		{'type': 'jennifer', 'from': 112, 'to': 89, 'need': None, 'level': 4},
+		{'type': 'arnold', 'from': 81, 'to': 117, 'need': (0x4, 0x10, 0x23), 'return': True},
+		{'type': 'jennifer', 'from': 112, 'to': 89, 'need': (0x10,), 'level': 4},
 		{'type': 'hack', 'from': 58, 'to': 110, 'need': None},
 		{'type': 'hack', 'from': 110, 'to': 64, 'need': None},
 		{'type': 'hack', 'from': 64, 'to': 65, 'need': None},
@@ -498,7 +499,7 @@ def get_spots(areas, spots): # {{{
 	raise AssertionError('no spots available')
 # }}}
 
-def randomize(version = None, close_doors = None): # {{{
+def randomize(version = None, close_doors = None, show_doors = False): # {{{
 	if version is None:
 		version = 'English (original)'
 	data = list(open(versions[version][0], 'rb').read())
@@ -510,28 +511,39 @@ def randomize(version = None, close_doors = None): # {{{
 	# Permanently open doors in building 2 to prevent getting stuck.
 	for hack in open_doors:
 		data[hack + 0x1f000 - 0xb000] = 0x81
+	# Show door numbers.
+	if show_doors and version == 'English (original)':
+		showcode = (0xd1, 0x2b, 0x2b, 0x2b, 0x2b, 0xe5, 0x21, 0xce, 0xbf, 0xe5, 0xd5, 0xc3, 0xea, 0x41, 0xe1, 0x7e, 0x3d, 0x3d, 0xe6, 0xbf, 0xfe, 0x08, 0xd0, 0xed, 0x5b, 0x00, 0xec, 0x3c, 0x87, 0x87, 0x87, 0x67, 0x2e, 0x40, 0x3e, 0x48, 0x01, 0x08, 0x08, 0xc3, 0x11, 0x50)
+		for i, c in enumerate(showcode):
+			data[0x7fc0 + i] = c
+		data[0x373a] = 0xc0
+		data[0x373b] = 0xbf
 	# Generate order in which regions can be visited.
-	regions = set(range(1, 117))
+	regions = set(range(1, 118))
 	order = [('start', 0, None)]
 	used = [0]
 	rescued = 0
 	used_doors = 0
+	have_explode = False
+	have_missile = False
 	while len(regions) > 0:
 		# Find reachable regions.
 		reachable = []
 		for door in doors:
 			if door['from'] in used and door['to'] not in used:
 				reachable.append(('door', door['to'], door))
-		for e in explodes:
-			if e[0] in used and e[1] not in used:
-				reachable.append(('explode', e[1], e[0]))
-			if e[1] in used and e[0] not in used:
-				reachable.append(('explode', e[0], e[1]))
-		for e in electric:
-			if e[0] in used and e[1] not in used:
-				reachable.append(('electric', e[1], e[0]))
-			if e[1] in used and e[0] not in used:
-				reachable.append(('electric', e[0], e[1]))
+		if not have_explode:
+			for e in explodes:
+				if e[0] in used and e[1] not in used:
+					reachable.append(('explode', e[1], e[0]))
+				if e[1] in used and e[0] not in used:
+					reachable.append(('explode', e[0], e[1]))
+		if not have_missile:
+			for e in electric:
+				if e[0] in used and e[1] not in used:
+					reachable.append(('electric', e[1], e[0]))
+				if e[1] in used and e[0] not in used:
+					reachable.append(('electric', e[0], e[1]))
 		for one in oneway:
 			if one['from'] in used and one['to'] not in used \
 					and ('level' not in one or one['level'] <= 1 + rescued // 5) \
@@ -544,7 +556,27 @@ def randomize(version = None, close_doors = None): # {{{
 			rescued += 1
 		regions.remove(target[1])
 		used.append(target[1])
+		if target[0] == 'electric':
+			have_missile = True
+		if target[0] == 'explode':
+			have_explode = True
 		order.append(target)
+		# Add electric connections.
+		if have_missile:
+			for e in electric:
+				for old, new in ((e[0], e[1]), (e[1], e[0])):
+					if old in used and new not in used:
+						regions.remove(new)
+						used.append(new)
+						order.append(('electric', new, old))
+		# Add explosive connections.
+		if have_explode:
+			for e in explodes:
+				for old, new in ((e[0], e[1]), (e[1], e[0])):
+					if old in used and new not in used:
+						regions.remove(new)
+						used.append(new)
+						order.append(('explode', new, old))
 		if target[0] == 'door':
 			used_doors += 1
 	# Distribute items such that the order works.
@@ -650,8 +682,10 @@ try:
 	def new_page(connection, path = None):
 		if connection.address.path != '/random.rom':
 			return default_page(connection, path)
-		close_doors = None if 'doors' not in connection.query or connection.query['doors'] == 'keep' else True if connection.query['doors'] == 'close' else False
-		data = randomize(connection.query['rom'][0] if 'rom' in connection.query else None, close_doors)
+		close_doors = None if 'doors' not in connection.query or connection.query['doors'][-1] == 'keep' else True if connection.query['doors'][-1] == 'close' else False
+		show_doors = 'showdoor' in connection.query and connection.query['showdoor'][-1].lower() == 'true'
+		print(connection.query, close_doors, show_doors)
+		data = randomize(connection.query['rom'][0] if 'rom' in connection.query else None, close_doors, show_doors)
 		return server.reply(connection, 200, bytes(data), 'application/octet-stream')
 
 	default_page = server.page

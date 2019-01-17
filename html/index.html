@@ -4,11 +4,18 @@
 		<meta charset='utf-8'/>
 		<title>Metal Gear Randomizer</title>
 		<script type='application/javascript'>
-			function update_link() {
+			function update_link(change_show) {
 				var link = 'random.rom';
 				var e = document.getElementById('rom');
 				var d = document.getElementById('doors');
-				link += '?rom=' + e.value + '&doors=' + d.value;
+				var s = document.getElementById('showdoor');
+				if (s.value == 'true' && e.value != 'English (Original)') {
+					if (change_show)
+						e.options[0].selected = true;
+					else
+						s.options[0].selected = true;
+				}
+				link += '?rom=' + e.value + '&doors=' + d.value + '&showdoor=' + s.value;
 				document.getElementById('link').href = link;
 			}
 		</script>
@@ -30,6 +37,13 @@
 					<option value='keep' selected='selected'>Don't change</option>
 					<option value='close'>Close</option>
 					<option value='open'>Leave open</option>
+				</select>
+			</li>
+			<li>
+				Door code showing:
+				<select onchange='update_link(true)' name='doors' id='showdoor'>
+					<option value='false' selected='selected'>No</option>
+					<option value='true'>Yes</option>
 				</select>
 			</li>
 			<li><a id='link' href='random.rom'>Generate</a></li>

@@ -251,3 +251,32 @@ e: auto open at event (mg dead; big boss dead)
 4c: uniform
 
 
+4411: read doors in new screen.
+	de = 0xa7c0[2*a]
+	hl = c3d0
+	++ix[0]
+	c=*de
+	*hl++ = *de++
+	*hl++ = c450[c-1]
+	*hl++ = b046[c-1]	; door type.
+	*hl++ = *de++
+	if de[-1] == 6:
+		hl[-2] = de[-1]
+	*hl++ = 0
+	*hl++ = *de++
+	*hl++ = *de++
+	; do something with a720[2*(a-1)]
+
+find door drawing...
+771c: read c3d1
+7722: read c3d3
+7725: read c3d5
+7728: read c3d6
+
+
+
+5011: draw door character: hl = src; de = dst; bc = size; a = high y bits and operation (h,0,l,a[6:7]; d,0,e,a[4:5]; b,0,c,0; 0,0,0x90|a[0:3]
+
+77d8: draw N door
+77f3: draw S? door
+7738: draw door with jump map @773c
