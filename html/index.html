@@ -9,11 +9,13 @@
 				var e = document.getElementById('rom');
 				var d = document.getElementById('doors');
 				var s = document.getElementById('showdoor');
-				if (s.value == 'true' && e.value != 'English (Original)') {
+				if (s.value == 'true' && e.value != 'English (original)') {
+					console.info(e.value);
 					if (change_show)
 						e.options[0].selected = true;
 					else
 						s.options[0].selected = true;
+					alert('Showing doors is only supported with the original English rom; setting changed to make it work.');
 				}
 				link += '?rom=' + e.value + '&doors=' + d.value + '&showdoor=' + s.value;
 				document.getElementById('link').href = link;
@@ -45,6 +47,7 @@
 					<option value='false' selected='selected'>No</option>
 					<option value='true'>Yes</option>
 				</select>
+				(Only works with original English ROM image.)
 			</li>
 			<li><a id='link' href='random.rom'>Generate</a></li>
 		</ul>

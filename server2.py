@@ -116,12 +116,13 @@ items = [parse_line(line) for line in '''
 41	db7d 23 30 68 ff	2a
 24	db81 23 2a 40		2b
 24	db84 05 70 a8 ff	2b
-93	db88 23 50 18 ff	2c
-93	db8c 1e 40 48 ff	2d
 40	db90 07 20 48 ff	2e
 75	db94 23 50 60		2f
 75	db97 23 70 a8 ff	2f
 '''.split('\n') if line.split() != []]
+# Get rid of those, because they don't seem to work well.
+#93	db88 23 50 18 ff	2c
+#93	db8c 1e 40 48 ff	2d
 # }}}
 
 '''	Original item data. {{{

@@ -26,16 +26,16 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="1.2003863"
-     inkscape:cx="-2986.5386"
-     inkscape:cy="948.42401"
+     inkscape:zoom="0.10610016"
+     inkscape:cx="-1952.4229"
+     inkscape:cy="721.05323"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="false"
-     inkscape:window-width="1920"
-     inkscape:window-height="1001"
-     inkscape:window-x="0"
-     inkscape:window-y="25"
+     inkscape:window-width="1280"
+     inkscape:window-height="970"
+     inkscape:window-x="1920"
+     inkscape:window-y="56"
      inkscape:window-maximized="1" />
   <metadata
      id="metadata5">
@@ -59,83 +59,83 @@
       <image
          sodipodi:absref="/home/shevek/msx/mg/floors/floor-00.png"
          xlink:href="floors/floor-00.png"
-         y="-432.68365"
-         x="-966.83118"
-         id="image1901"
-         style="image-rendering:optimizeSpeed"
-         preserveAspectRatio="none"
+         width="270.93332"
          height="1168.4"
-         width="270.93332" />
+         preserveAspectRatio="none"
+         style="image-rendering:optimizeSpeed"
+         id="image1901"
+         x="-966.83118"
+         y="-432.68365" />
       <image
          sodipodi:absref="/home/shevek/msx/mg/floors/floor-1c.png"
          xlink:href="floors/floor-1c.png"
-         y="494.00119"
-         x="-291.19287"
-         id="image1912"
-         style="image-rendering:optimizeSpeed"
-         preserveAspectRatio="none"
+         width="270.93332"
          height="203.2"
-         width="270.93332" />
+         preserveAspectRatio="none"
+         style="image-rendering:optimizeSpeed"
+         id="image1912"
+         x="-291.19287"
+         y="494.00119" />
       <image
          sodipodi:absref="/home/shevek/msx/mg/floors/floor-4f.png"
          xlink:href="floors/floor-4f.png"
-         y="-30.173002"
-         x="-620.84332"
-         id="image1923"
-         style="image-rendering:optimizeSpeed"
-         preserveAspectRatio="none"
+         width="203.2"
          height="152.39999"
-         width="203.2" />
+         preserveAspectRatio="none"
+         style="image-rendering:optimizeSpeed"
+         id="image1923"
+         x="-620.84332"
+         y="-30.173002" />
       <image
          sodipodi:absref="/home/shevek/msx/mg/floors/floor-6f.png"
          xlink:href="floors/floor-6f.png"
-         y="-578.84644"
-         x="-1206.8024"
-         id="image1934"
-         style="image-rendering:optimizeSpeed"
-         preserveAspectRatio="none"
+         width="203.2"
          height="304.79999"
-         width="203.2" />
+         preserveAspectRatio="none"
+         style="image-rendering:optimizeSpeed"
+         id="image1934"
+         x="-1206.8024"
+         y="-578.84644" />
       <image
          sodipodi:absref="/home/shevek/msx/mg/floors/floor-10.png"
          xlink:href="floors/floor-10.png"
-         y="490.34283"
-         x="-609.84241"
-         id="image1945"
-         style="image-rendering:optimizeSpeed"
-         preserveAspectRatio="none"
+         width="270.93332"
          height="203.2"
-         width="270.93332" />
+         preserveAspectRatio="none"
+         style="image-rendering:optimizeSpeed"
+         id="image1945"
+         x="-609.84241"
+         y="490.34283" />
       <image
          sodipodi:absref="/home/shevek/msx/mg/floors/floor-28.png"
          xlink:href="floors/floor-28.png"
-         y="456.08847"
-         x="45.672626"
-         id="image1956"
-         style="image-rendering:optimizeSpeed"
-         preserveAspectRatio="none"
+         width="270.93332"
          height="203.2"
-         width="270.93332" />
+         preserveAspectRatio="none"
+         style="image-rendering:optimizeSpeed"
+         id="image1956"
+         x="45.672626"
+         y="456.08847" />
       <image
          sodipodi:absref="/home/shevek/msx/mg/floors/floor-36.png"
          xlink:href="floors/floor-36.png"
-         y="17.788834"
-         x="-1324.9899"
-         id="image1967"
-         style="image-rendering:optimizeSpeed"
-         preserveAspectRatio="none"
+         width="270.93332"
          height="558.79999"
-         width="270.93332" />
+         preserveAspectRatio="none"
+         style="image-rendering:optimizeSpeed"
+         id="image1967"
+         x="-1324.9899"
+         y="17.788834" />
       <image
          sodipodi:absref="/home/shevek/msx/mg/floors/floor-58.png"
          xlink:href="floors/floor-58.png"
-         y="-21.860716"
-         x="-338.21307"
-         id="image1978"
-         style="image-rendering:optimizeSpeed"
-         preserveAspectRatio="none"
+         width="203.2"
          height="152.39999"
-         width="203.2" />
+         preserveAspectRatio="none"
+         style="image-rendering:optimizeSpeed"
+         id="image1978"
+         x="-338.21307"
+         y="-21.860716" />
     </g>
   </g>
   <g
@@ -1322,24 +1322,24 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.69999981px;line-height:6.61458302px;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;text-anchor:start;opacity:1;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       x="-759.16516"
-       y="-418.13095"
+       x="-758.50391"
+       y="-409.09393"
        id="text2487"><tspan
          sodipodi:role="line"
          id="tspan2485"
-         x="-759.16516"
-         y="-418.13095"
+         x="-758.50391"
+         y="-409.09393"
          style="stroke-width:2">99</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.69999981px;line-height:6.61458302px;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;text-anchor:start;opacity:1;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       x="-720.04462"
-       y="-418.31995"
+       x="-720.92627"
+       y="-408.18085"
        id="text2491"><tspan
          sodipodi:role="line"
          id="tspan2489"
-         x="-720.04462"
-         y="-418.31995"
+         x="-720.92627"
+         y="-408.18085"
          style="stroke-width:2">100</tspan></text>
     <text
        xml:space="preserve"
@@ -1495,5 +1495,38 @@
          x="-881.23975"
          id="tspan1066"
          sodipodi:role="line">114</tspan></text>
+    <text
+       id="text1070"
+       y="52.13789"
+       x="-520.93677"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:8.10920525px;line-height:4.22354412px;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;text-anchor:start;opacity:1;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="stroke-width:2"
+         y="52.13789"
+         x="-520.93677"
+         id="tspan1068"
+         sodipodi:role="line">117</tspan></text>
+    <text
+       id="text1074"
+       y="-422.06702"
+       x="-762.36432"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.69999981px;line-height:6.61458302px;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;text-anchor:start;opacity:1;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       xml:space="preserve"><tspan
+         style="stroke-width:2"
+         y="-422.06702"
+         x="-762.36432"
+         id="tspan1072"
+         sodipodi:role="line">115</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:12.69999981px;line-height:6.61458302px;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;text-anchor:start;opacity:1;fill:#ffff00;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       x="-721.36713"
+       y="-421.40576"
+       id="text1078"><tspan
+         sodipodi:role="line"
+         id="tspan1076"
+         x="-721.36713"
+         y="-421.40576"
+         style="stroke-width:2">116</tspan></text>
   </g>
 </svg>
