@@ -270,11 +270,11 @@ doors = [ # {{{
 		{'addr': 0xb075, 'from': 74, 'to': 76},
 		{'addr': 0xb0cd, 'from': 74, 'to': 75},
 		{'addr': 0xb095, 'from': 72, 'to': 73},
-		#{'addr': 0xb097, 'from': 65, 'to': 64},
+		#{'addr': 0xb097, 'from': 118, 'to': 64},
 		{'addr': 0xb09a, 'from': 60, 'to': 110},
 		{'addr': 0xb098, 'from': 64, 'to': 63},
 		{'addr': 0xb099, 'from': 72, 'to': 62},
-		#{'addr': 0xb097, 'from': 64, 'to': 65},
+		#{'addr': 0xb097, 'from': 64, 'to': 118},
 		{'addr': 0xb09a, 'from': 110, 'to': 60},
 		{'addr': 0xb09b, 'from': 110, 'to': 59},
 		#{'addr': 0xb09c, 'from': 110, 'to': 58},
@@ -390,6 +390,7 @@ explodes = [ # {{{
 		(94, 96),
 		(96, 97),
 		(102, 104),
+		(107, 108),
 	] # }}}
 
 electric = [ # {{{
@@ -418,14 +419,13 @@ oneway = [
 		{'type': 'compass', 'from': 93, 'to': 92, 'need': None},
 		{'type': 'light', 'from': 76, 'to': 113, 'need': (0xb,)},
 		{'type': 'light', 'from': 113, 'to': 76, 'need': (0xb,)},
-		{'type': 'metal gear', 'from': 107, 'to': 108, 'need': (0x5,), 'level': 4, 'return': True},
 		{'type': 'big boss', 'from': 108, 'to': 109, 'need': (0x4, 0x10, 0x23), 'return': True},
 		{'type': 'capture', 'from': 15, 'to': 21, 'need': None},
 		{'type': 'lorry', 'from': 48, 'to': 45, 'need': None},
 		{'type': 'lorry', 'from': 45, 'to': 0, 'need': None},
 		{'type': 'lorry', 'from': 93, 'to': 48, 'need': None},
 		{'type': 'lorry', 'from': 93, 'to': 45, 'need': None},
-		{'type': 'lift', 'from': 65, 'to': 53, 'need': None},
+		{'type': 'lift', 'from': 118, 'to': 53, 'need': None},
 		{'type': 'lift', 'from': 71, 'to': 58, 'need': None},
 		{'type': 'lift', 'from': 53, 'to': 81, 'need': None},
 		{'type': 'lift', 'from': 91, 'to': 71, 'need': None},
@@ -435,7 +435,7 @@ oneway = [
 		{'type': 'jennifer', 'from': 112, 'to': 89, 'need': (0x10,), 'level': 4},
 		{'type': 'hack', 'from': 58, 'to': 110, 'need': None},
 		{'type': 'hack', 'from': 110, 'to': 64, 'need': None},
-		{'type': 'hack', 'from': 64, 'to': 65, 'need': None},
+		{'type': 'hack', 'from': 64, 'to': 118, 'need': None},
 		{'type': 'hack', 'from': 54, 'to': 57, 'need': None},
 		{'type': 'hack', 'from': 21, 'to': 15, 'need': None},
 	]
@@ -520,7 +520,7 @@ def randomize(version = None, close_doors = None, show_doors = False): # {{{
 		data[0x373a] = 0xc0
 		data[0x373b] = 0xbf
 	# Generate order in which regions can be visited.
-	regions = set(range(1, 118))
+	regions = set(range(1, 119))
 	order = [('start', 0, None)]
 	used = [0]
 	rescued = 0
@@ -562,22 +562,38 @@ def randomize(version = None, close_doors = None, show_doors = False): # {{{
 		if target[0] == 'explode':
 			have_explode = True
 		order.append(target)
+		def connect_test(type, old, new):
+			if old not in used or new in used:
+				return False
+			regions.remove(new)
+			used.append(new)
+			order.append((type, new, old))
+			return True
 		# Add electric connections.
 		if have_missile:
-			for e in electric:
-				for old, new in ((e[0], e[1]), (e[1], e[0])):
-					if old in used and new not in used:
-						regions.remove(new)
-						used.append(new)
-						order.append(('electric', new, old))
+			while True:
+				for e in electric:
+					if connect_test('electric', e[0], e[1]) or connect_test('electric', e[1], e[0]):
+						break
+				else:
+					break
 		# Add explosive connections.
 		if have_explode:
-			for e in explodes:
-				for old, new in ((e[0], e[1]), (e[1], e[0])):
-					if old in used and new not in used:
-						regions.remove(new)
-						used.append(new)
-						order.append(('explode', new, old))
+			while True:
+				for e in explodes:
+					if connect_test('explode', e[0], e[1]) or connect_test('explode', e[1], e[0]):
+						break
+				else:
+					break
+		while True:
+			for e in oneway:
+				if e['need'] is None and e['from'] in used and e['to'] not in used:
+					regions.remove(e['to'])
+					used.append(e['to'])
+					order.append(('oneway', e['to'], e))
+					break
+			else:
+				break
 		if target[0] == 'door':
 			used_doors += 1
 	# Distribute items such that the order works.
