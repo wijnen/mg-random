@@ -500,7 +500,7 @@ def get_spots(areas, spots): # {{{
 	raise AssertionError('no spots available')
 # }}}
 
-def randomize(version = None, close_doors = None, show_doors = False): # {{{
+def randomize(version = None, close_doors = None, show_doors = False, extreme = False): # {{{
 	if version is None:
 		version = 'English (original)'
 	data = list(open(versions[version][0], 'rb').read())
@@ -606,9 +606,12 @@ def randomize(version = None, close_doors = None, show_doors = False): # {{{
 	for c in range(1, 8):
 		cards.append(random.randrange(used_doors * (len(cards) - 1) // 7 + 1, used_doors * len(cards) // 7))
 	# Assign non-unique items to drops.
-	drops = [default_item(), default_item()]
-	while drops[0] == drops[1]:
-		drops[1] = default_item()
+	if extreme:
+		drops = [0, 0]
+	else:
+		drops = [default_item(), default_item()]
+		while drops[0] == drops[1]:
+			drops[1] = default_item()
 	for spot in range(2):
 		add_item(data, drops[spot], spots, item_offset, code_offset, items[spot])
 		found.add(drops[spot])
@@ -678,13 +681,13 @@ def randomize(version = None, close_doors = None, show_doors = False): # {{{
 			continue
 		item = random.sample(all_items, 1)[0]
 		all_items.remove(item)
-		add_item(data, item, spots, item_offset, code_offset, items[spot])
+		add_item(data, 0 if extreme else item, spots, item_offset, code_offset, items[spot])
 		found.add(item)
 	for i in all_items:
-		add_item(data, i, spots, item_offset, code_offset)
+		add_item(data, 0 if extreme else i, spots, item_offset, code_offset)
 		found.add(i)
 	while len(spots) > 0:
-		add_item(data, default_item(), spots, item_offset, code_offset)
+		add_item(data, 0 if extreme else default_item(), spots, item_offset, code_offset)
 	return bytes(data)
 # }}}
 
@@ -701,8 +704,9 @@ try:
 			return default_page(connection, path)
 		close_doors = None if 'doors' not in connection.query or connection.query['doors'][-1] == 'keep' else True if connection.query['doors'][-1] == 'close' else False
 		show_doors = 'showdoor' in connection.query and connection.query['showdoor'][-1].lower() == 'true'
-		print(connection.query, close_doors, show_doors)
-		data = randomize(connection.query['rom'][0] if 'rom' in connection.query else None, close_doors, show_doors)
+		extreme = 'extreme' in connection.query and connection.query['extreme'][-1].lower() == 'true'
+		print(connection.query, close_doors, show_doors, extreme)
+		data = randomize(connection.query['rom'][0] if 'rom' in connection.query else None, close_doors, show_doors, extreme)
 		return server.reply(connection, 200, bytes(data), 'application/octet-stream')
 
 	default_page = server.page

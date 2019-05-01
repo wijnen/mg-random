@@ -9,6 +9,7 @@
 				var e = document.getElementById('rom');
 				var d = document.getElementById('doors');
 				var s = document.getElementById('showdoor');
+				var x = document.getElementById('extreme');
 				if (s.value == 'true' && e.value != 'English (original)') {
 					console.info(e.value);
 					if (change_show)
@@ -17,7 +18,7 @@
 						s.options[0].selected = true;
 					alert('Showing doors is only supported with the original English rom; setting changed to make it work.');
 				}
-				link += '?rom=' + e.value + '&doors=' + d.value + '&showdoor=' + s.value;
+				link += '?rom=' + e.value + '&doors=' + d.value + '&showdoor=' + s.value + '&extreme=' + x.value;
 				document.getElementById('link').href = link;
 			}
 		</script>
@@ -48,6 +49,13 @@
 					<option value='true'>Yes</option>
 				</select>
 				(Only works with original English ROM image.)
+			</li>
+			<li>
+				Extreme mode:
+				<select onchange='update_link(true)' name='extreme' id='extreme'>
+					<option value='false' selected='selected'>No</option>
+					<option value='true'>Yes</option>
+				</select>
 			</li>
 			<li><a id='link' href='random.rom'>Generate</a></li>
 		</ul>
