@@ -14,9 +14,10 @@ To run, the program needs:
 
 - Python3
 - Python-fhs
+- Python-network
 - Python-websocketd
 
-The two modules can be found on https://github.com/wijnen/. Without them the
+The three modules can be found on https://github.com/wijnen/. Without them the
 randomizer can still be used as a commandline program.
 
 The modules have only been tested to work on GNU/Linux. They may not work on
@@ -26,12 +27,12 @@ Obviously you will also need some way to play the generated ROM image. I use
 the OpenMSX emulator.
 
 ## Use from the commandline
-If the two Python modules are not installed, running server2.py will generate
+If the three Python modules are not installed, running server2.py will generate
 an image and place it in the current directory with the name _random.rom_. In
 this mode it is not possible to change any settings.
 
 ## Use as a server
-If the two Python modules are installed, running server2.py will start a web
+If the three Python modules are installed, running server2.py will start a web
 server on port 9999. This can be reached by pointing your browser to
 http://localhost:9999/. This page will show some settings and a button to
 generate an image with those settings. 
