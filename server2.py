@@ -695,7 +695,8 @@ try:
 	import fhs
 	import websocketd
 
-	config = fhs.init({'port': 9999})
+	fhs.option('port', 'port to listen on', default = '9999')
+	config = fhs.init()
 
 	server = websocketd.Httpd(config['port'], None, httpdirs = ['html'], tls = False)
 
